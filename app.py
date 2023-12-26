@@ -6,4 +6,4 @@ app = Flask(__name__)
 
 @app.route("/board", methods=["GET", "POST"])
 def board():
-    return {"num":random.randint(1, 8)}
+    return {"move": request.json.get("move")}
