@@ -1,7 +1,6 @@
 from flask import Flask, request
 from random import randint
 from json import load, dump
-import numpy as np
 
 app = Flask(__name__)
 
@@ -15,18 +14,27 @@ def new():
         return "".join(id)
     
     with open("data.json") as file:
-        existing = load(file)
+        existing = dict(load(file))
     
     id = new_game_id()
     while id in existing.keys(): id = new_game_id()
-    
-    existing.update({id: {"players": request.json["players"], "board": np.full((10, 10), 0)}})
-    
-    with open("data.json") as file:
+    existing[id] = {"players": request.json["players"], "board": f"{[[0 for _ in range(10)] for _ in range(10)]}"} #request.json["players"]
+    print(existing)
+    with open("data.json", "w") as file:
         dump(existing, file)
-    
-    return {"game_id": id}
+    return dict({"game_id" : id})
 
 @app.route("/board", methods=["GET", "POST"])
 def board():
     return {"move": request.json.get("move")}
+
+@app.route("/exit", methods=["GET", "POST"])
+def exit():
+    try:
+        with open("data.json") as file:
+            existing = dict(load(file))
+        del existing[request.json["game_id"]] #request.json["game_id"]
+        with open("data.json", "w") as file:
+            dump(existing, file)
+        return {"success": "true"}
+    except: return {"success": "false"}
