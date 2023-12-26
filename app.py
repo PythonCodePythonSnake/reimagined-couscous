@@ -7,5 +7,3 @@ app = Flask(__name__)
 @app.route("/board")
 def board():
     return random.randint(1, 8)
-
-app.run(debug=True)
