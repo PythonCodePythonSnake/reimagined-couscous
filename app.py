@@ -4,6 +4,6 @@ import random
 
 app = Flask(__name__)
 
-@app.route("/board")
+@app.route("/board", methods=["GET", "POST"])
 def board():
-    return random.randint(1, 8)
+    return {"num":random.randint(1, 8)}
